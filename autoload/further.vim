@@ -1,8 +1,8 @@
-if exists('b:further_initialized')
-  finish
-endif
+" if exists('b:further_initialized')
+"   finish
+" endif
 
-let b:further_initialized = 1
+" let b:further_initialized = 1
 
 " Get content immediately following the cursor.
 function! further#get_content_following_cursor() abort
@@ -53,24 +53,38 @@ function! further#resolve_file_location(path) abort
 
   let l:node_cmd = 'node -p ' . shellescape(l:node_expr)
 
-  return system(l:cd_cmd . ' && ' . l:node_cmd)
+  return substitute(system(l:cd_cmd . ' && ' . l:node_cmd), "\n", '', '')
 endfunction
 
 " Resolve an absolute path to the module beneath the cursor.
 function! further#resolve_path_under_cursor() abort
   let l:file_name = further#get_file_under_cursor()
+  let l:file_path = further#resolve_file_location(l:file_name)
 
-  return further#resolve_file_location(l:file_name)
+  if !filereadable(l:file_path)
+    echom 'Can''t find module "' . l:file_name . '".'
+  endif
+
+  return l:file_path
+endfunction
+
+function! s:do_action_when_found(action) abort
+  let l:file_name = further#get_file_under_cursor()
+  let l:file_path = further#resolve_file_location(l:file_name)
+
+  if filereadable(l:file_path)
+    execute a:action . ' ' . l:file_path
+  else
+    echom 'Can''t find module "' . l:file_name . '".'
+  endif
 endfunction
 
 " Edit the resolved file location in the current pane.
 function! further#locate_and_edit_file() abort
-  let l:file_path = further#resolve_path_under_cursor()
-  execute 'edit ' . l:file_path
+  call s:do_action_when_found('edit')
 endfunction
 
 " Edit the resolved file location in a new tab.
 function! further#locate_and_edit_file_in_new_tab() abort
-  let l:file_path = further#resolve_path_under_cursor()
-  execute 'tabedit ' . l:file_path
+  call s:do_action_when_found('tabedit')
 endfunction
