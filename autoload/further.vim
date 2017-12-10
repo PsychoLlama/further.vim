@@ -1,8 +1,8 @@
-" if exists('b:further_initialized')
-"   finish
-" endif
+if exists('b:further_initialized')
+  finish
+endif
 
-" let b:further_initialized = 1
+let b:further_initialized = 1
 
 " Get content immediately following the cursor.
 function! further#get_content_following_cursor() abort
