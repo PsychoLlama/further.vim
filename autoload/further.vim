@@ -68,9 +68,28 @@ function! further#resolve_path_under_cursor() abort
   return l:file_path
 endfunction
 
+" Format a path relative to the current file's directory.
+function! further#get_local_file_name(module) abort
+  if a:module[0] ==# '/'
+    return a:module
+  endif
+
+  let l:current_dir = expand('%:p:h')
+  let l:prefix = '/'
+
+  " ~/current/dir + / + some-file.ext
+  return l:current_dir . l:prefix . a:module
+endfunction
+
+" Execute a command once the file path is resolved.
 function! s:do_action_when_found(action) abort
   let l:file_name = further#get_file_under_cursor()
-  let l:file_path = further#resolve_file_location(l:file_name)
+  let l:file_path = further#get_local_file_name(l:file_name)
+
+  " Before asking Node, see if the file exists as a relative path.
+  if !filereadable(l:file_path)
+    let l:file_path = further#resolve_file_location(l:file_name)
+  endif
 
   if filereadable(l:file_path)
     execute a:action . ' ' . l:file_path
