@@ -96,6 +96,10 @@ function! s:do_action_when_found(action) abort
     let l:file_path = further#resolve_file_location(l:file_name)
   endif
 
+  if exists('*FurtherMapModuleName')
+    let l:file_path = g:FurtherMapModuleName(l:file_path, l:file_name)
+  endif
+
   if filereadable(l:file_path)
     execute a:action . ' ' . l:file_path
   else
