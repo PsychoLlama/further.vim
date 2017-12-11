@@ -83,6 +83,11 @@ endfunction
 
 " Execute a command once the file path is resolved.
 function! s:do_action_when_found(action) abort
+  if !executable('node')
+    echoerr 'Node executable not found (required by further.vim)'
+    return
+  endif
+
   let l:file_name = further#get_file_under_cursor()
   let l:file_path = further#get_local_file_name(l:file_name)
 
