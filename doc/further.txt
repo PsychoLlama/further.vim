@@ -1,0 +1,113 @@
+*further.vim* Follow JavaScript imports to their source
+
+Author:   Jesse Gibson <Jesse_Gibson@me.com>
+Version:  0.1.0
+Homepage: https://github.com/PsychoLlama/further.vim
+License:  MIT
+
+                                                                 *further-toc*
+1. Overview.................................................|further-overview|
+2. Mappings.................................................|further-mappings|
+3. Advanced.................................................|further-advanced|
+4. Changelog...............................................|further-changelog|
+
+Overview                                                    *further-overview*
+------------------------------------------------------------------------------
+Vim has this thing built in: `gf`. It's super fancy. The text under your
+cursor is treated as a file path and opened in the same pane. When you've got
+a lot of imports, it can be a life saver.
+
+Not everything is a relative file import though. What about this? >
+
+  import React from 'react'
+<
+That doesn't make much sense to vim. Luckily, it has another feature, *path*
+It instructs vim which folders to look in when resolving `gf` file paths.
+But it ain't that simple. Resolving a module means finding it's folder,
+looking in the package.json for the `main` field, and opening that file... and
+that's ignoring how projects often have multiple versions of the same
+libraries, nested `node_modules` folders, and symlinks everywhere.
+
+It becomes unmanageable the second you enter a monorepo.
+
+That's where `further` shines. It replaces the built-in `gf` mapping with the
+JS module resolution algorithm, letting you navigate the maze of modules with
+ease.
+
+2. Mappings                                                 *further-mappings*
+------------------------------------------------------------------------------
+  `gf`        Locate the file being imported and open it in the current pane
+  <C-w>`gf`   Same as `gf`, but instead opens it in a new tab.
+
+Example: >
+                             cursor
+                               ▼
+  import { createStore } from '|redux'
+  (keypress) gf
+  Vim edits "<root>/node_modules/redux/lib/index.js"
+<
+
+3. Advanced                                                 *further-advanced*
+------------------------------------------------------------------------------
+It's possible to transform a file path before opening it. A perfect use-case
+is monorepos, where the import will direct you to compiled code. You don't
+like reading compiled code. Why should you? The source is right there!
+
+By defining the function `g:FurtherMapModuleName` you can intercept and
+transform a file path before it opens. Here's how you'd use it for a monorepo:
+>
+  project
+    package.json
+    packages/
+      utilities/
+        package.json
+        src/
+        dist/
+      app/
+        package.json
+        src/
+          index.js
+
+  // In App's index.js
+  // This will direct us to ../../utilities/dist/index.js
+  // We want to replace dist/ with src/
+  import utils from '@project/utilities'
+<
+The function accepts two arguments:
+    1. The absolute path to the file (`/Users/<name>/project/...`)
+    2. How it was imported (`utilities`)
+
+Whatever the function returns is the file path that's edited. Since we only
+want to transform module paths in the same monorepo, just return the first
+argument unchanged by default.
+>
+  " Don't worry about the syntax. Vimscript is weird.
+  function! g:FurtherMapModuleName(resolved, import_name)
+    return a:resolved
+  endfunction
+<
+From there you can add in conditions. We want to intercept anything containing
+the word `@project` in the import, so let's start there...
+>
+  function! g:FurtherMapModuleName(resolved, import_name)
+
+    " This tests the import path against a case-sensitive regular expression.
+    if a:import_name =~# '@project'
+
+      " Replace the word `/dist` with `/src`.
+      return substitute(a:resolved, '/dist', '/src', '')
+    endif
+
+    return a:resolved
+  endfunction
+<
+Tada! Now `gf` will direct you to the source code when operating on
+`@project/...` imports.
+
+You'll probably need to tweak the function to work with your codebase, but not
+by much.
+
+Changelog                                                  *further-changelog*
+------------------------------------------------------------------------------
+0.1.0
+Initial release
