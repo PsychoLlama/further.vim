@@ -44,8 +44,9 @@ Plugin 'PsychoLlama/further.vim'
 ```
 
 **pathogen**
-```
-I totally forgot how pathogen works.
+```sh
+cd ~/.vim/bundle
+git clone https://github.com/psychollama/further.vim
 ```
 
 ## Documentation
