@@ -116,3 +116,14 @@ endfunction
 function! further#locate_and_edit_file_in_new_tab() abort
   call s:do_action_when_found('tabedit')
 endfunction
+
+function! further#initialize_mappings() abort
+  if exists('b:further_mappings_defined')
+    return
+  endif
+
+  let b:further_mappings_defined = 1
+
+  nnoremap <silent><buffer>gf :call further#locate_and_edit_file()<cr>
+  nnoremap <silent><buffer><C-w>gf :call further#locate_and_edit_file_in_new_tab()<cr>
+endfunction
