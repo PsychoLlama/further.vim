@@ -1,1 +1,1 @@
-call further#initialize_mappings()
+call further#mappings#Initialize()
