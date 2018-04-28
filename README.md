@@ -60,7 +60,7 @@ git clone https://github.com/psychollama/further.vim ~/.vim/bundle/
 ## Documentation
 All the docs are in the `further` help page. Install the plugin then run:
 ```viml
-:help further.vim
+:help further
 ```
 
 ## Contributing
