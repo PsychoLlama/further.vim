@@ -127,6 +127,7 @@ Changed:
 
 Added:
 - Support for .json files.
+- Support for `gf` and `<C-w>gf` in visual mode.
 
 ==============================================================================
 vim: ft=help tw=78:
