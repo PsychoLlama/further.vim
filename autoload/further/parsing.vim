@@ -1,35 +1,87 @@
-" Get content immediately following the cursor.
-func! further#parsing#GetContentFollowingCursor() abort
-  let l:column = getcurpos()[2] - 1
-  let l:line = getline('.')
+" Some examples:
+" @babel/cli, lodash.get, react-codemirror2/style.css, ../dialog_footer.js
+let s:PKG_NAME_CHARS = '\v(\@|\w|\d|_|-|/|\.)'
 
-  return strpart(l:line, l:column)
+" Normalize the starting index. If starting on an empty space,
+" search forward until locating a word. If no words, return v:null.
+func! further#parsing#GetStartColumnIndex(line) abort
+  let l:index = col('.') - 1
+
+  while l:index < strlen(a:line)
+    let l:char = a:line[l:index]
+
+    if l:char =~? s:PKG_NAME_CHARS
+      return l:index
+    endif
+
+    " Only search forward through whitespace and quotes.
+    if l:char !~# '\v("| |''|`)'
+      return v:null
+    endif
+
+    let l:index += 1
+  endwhile
+
+  return v:null
 endfunc
 
-" Figure out if the import uses single or double quotes.
-func! further#parsing#GetDelimiterType(following_cursor) abort
-  return a:following_cursor =~# "'" ? "'" : '"'
+" react-|addons-update
+"       ^
+"    cursor
+" Returns 'react-'
+func! further#parsing#ExtractPreceedingExcerpt(line, index) abort
+  let l:index = a:index
+  let l:excerpt = ''
+
+  while l:index >= 0
+    let l:char = a:line[l:index]
+
+    " Stop if the characters don't look like a package anymore.
+    if l:char !~? s:PKG_NAME_CHARS
+      return l:excerpt
+    endif
+
+    let l:excerpt = l:char . l:excerpt
+    let l:index -= 1
+  endwhile
+
+  return l:excerpt
 endfunc
 
-" Extract the file path from an import or require(...).
-func! further#parsing#ExtractFilePath(delimiter) abort
-  let l:prev_reg_contents = getreg('"')
+" react-|addons-update
+"       ^
+"    cursor
+" Returns 'addons-update'
+func! further#parsing#ExtractPostExcerpt(line, index) abort
+  let l:index = a:index + 1
+  let l:excerpt = ''
 
-  " Yank string contents then return to original position.
-  let l:cmd = 'm2yi' . a:delimiter . '`2'
-  execute 'normal! ' . l:cmd
-  let l:file_path = getreg('"')
+  while l:index <= strlen(a:line)
+    let l:char = a:line[l:index]
 
-  " Restore previous register contents.
-  call setreg('"', l:prev_reg_contents)
+    " Stop if the characters don't look like a package anymore.
+    if l:char !~? s:PKG_NAME_CHARS
+      return l:excerpt
+    endif
 
-  return l:file_path
+    let l:excerpt .= l:char
+    let l:index += 1
+  endwhile
+
+  return l:excerpt
 endfunc
 
 " Locate the module nearest the cursor.
 func! further#parsing#GetPathUnderCursor() abort
-  let l:following_cursor = further#parsing#GetContentFollowingCursor()
-  let l:delimiter = further#parsing#GetDelimiterType(l:following_cursor)
+  let l:line = getline('.')
+  let l:starting_index = further#parsing#GetStartColumnIndex(l:line)
 
-  return further#parsing#ExtractFilePath(l:delimiter)
+  if l:starting_index is v:null
+    return v:null
+  endif
+
+  let l:start = further#parsing#ExtractPreceedingExcerpt(l:line, l:starting_index)
+  let l:end = further#parsing#ExtractPostExcerpt(l:line, l:starting_index)
+
+  return l:start . l:end
 endfunc

@@ -35,6 +35,15 @@ function! s:DoActionWhenFound(action) abort
   endif
 
   let l:file_name = further#parsing#GetPathUnderCursor()
+
+  if l:file_name is v:null
+    echohl Error
+    echo 'No file or module under cursor'
+    echohl Clear
+
+    return
+  endif
+
   let l:file_path = further#plugin#GetLocalFileName(l:file_name)
 
   " Before asking Node, see if the file exists as a relative path.
