@@ -65,11 +65,11 @@ func! s:DoActionWhenFound(action, mode) abort
 endfunc
 
 " Edit the resolved file location in the current pane.
-func! further#plugin#LocateAndEditFile(mode) abort
+func! further#plugin#LocateAndEditFile(mode) abort range
   call s:DoActionWhenFound('edit', a:mode)
 endfunc
 
 " Edit the resolved file location in a new tab.
-func! further#plugin#LocateAndEditFileInNewTab(mode) abort
+func! further#plugin#LocateAndEditFileInNewTab(mode) abort range
   call s:DoActionWhenFound('tabedit', a:mode)
 endfunc
