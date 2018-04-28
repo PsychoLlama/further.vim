@@ -1,18 +1,21 @@
-*further.vim* Follow JavaScript imports to their source
+*further* follows JavaScript imports to their source
 
 Author:   Jesse Gibson <Jesse_Gibson@me.com>
-Version:  0.1.0
 Homepage: https://github.com/PsychoLlama/further.vim
 License:  MIT
+Tags: *further.vim*
 
-                                                                 *further-toc*
-1. Overview.................................................|further-overview|
-2. Mappings.................................................|further-mappings|
-3. Advanced.................................................|further-advanced|
-4. Changelog...............................................|further-changelog|
+==============================================================================
+CONTENTS                                                           *further-toc*
 
-Overview                                                    *further-overview*
-------------------------------------------------------------------------------
+  1. Overview                                                 |further-overview|
+  2. Mappings                                                 |further-mappings|
+  3. Advanced                                                 |further-advanced|
+  4. Changelog                                               |further-changelog|
+
+==============================================================================
+1. Overview                                                   *further-overview*
+
 Vim has this thing built in: `gf`. It's super fancy. The text under your
 cursor is treated as a file path and opened in the same pane. When you've got
 a lot of imports, it can be a life saver.
@@ -34,8 +37,9 @@ That's where `further` shines. It replaces the built-in `gf` mapping with the
 JS module resolution algorithm, letting you navigate the maze of modules with
 ease.
 
-2. Mappings                                                 *further-mappings*
-------------------------------------------------------------------------------
+==============================================================================
+2. Mappings                                                   *further-mappings*
+
   `gf`        Locate the file being imported and open it in the current pane
   <C-w>`gf`   Same as `gf`, but instead opens it in a new tab.
 
@@ -47,8 +51,9 @@ Example: >
   Vim edits "<root>/node_modules/redux/lib/index.js"
 <
 
-3. Advanced                                                 *further-advanced*
-------------------------------------------------------------------------------
+==============================================================================
+3. Advanced                                                   *further-advanced*
+
 It's possible to transform a file path before opening it. A perfect use-case
 is monorepos, where the import will direct you to compiled code. You don't
 like reading compiled code. Why should you? The source is right there!
@@ -107,7 +112,21 @@ Tada! Now `gf` will direct you to the source code when operating on
 You'll probably need to tweak the function to work with your codebase, but not
 by much.
 
-Changelog                                                  *further-changelog*
-------------------------------------------------------------------------------
+==============================================================================
+4. Changelog                                                 *further-changelog*
+
 0.1.0
 Initial release
+
+0.2.0
+Changed:
+- The module name is extracted differently, behaving more like the built-in
+  `gf` mapping. Previously it would look for the next string and extract the
+  contents. Now it grabs everything under the cursor which looks like a
+  module name or relative file path.
+
+Added:
+- Support for .json files.
+
+==============================================================================
+vim: ft=help tw=78:
