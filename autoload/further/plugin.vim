@@ -1,5 +1,5 @@
 " Query `require.resolve` for an absolute file path.
-function! further#plugin#ResolveFileLocation(path) abort
+func! further#plugin#ResolveFileLocation(path) abort
   let l:current_dir = expand('%:p:h')
   let l:cd_cmd = 'cd ' . shellescape(l:current_dir)
   let l:node_expr = '' .
@@ -12,10 +12,10 @@ function! further#plugin#ResolveFileLocation(path) abort
   let l:node_cmd = 'node -p ' . shellescape(l:node_expr)
 
   return substitute(system(l:cd_cmd . ' && ' . l:node_cmd), "\n", '', '')
-endfunction
+endfunc
 
 " Format a path relative to the current file's directory.
-function! further#plugin#GetLocalFileName(module) abort
+func! further#plugin#GetLocalFileName(module) abort
   if a:module[0] ==# '/'
     return a:module
   endif
@@ -25,10 +25,10 @@ function! further#plugin#GetLocalFileName(module) abort
 
   " ~/current/dir + / + some-file.ext
   return l:current_dir . l:prefix . a:module
-endfunction
+endfunc
 
 " Execute a command once the file path is resolved.
-function! s:DoActionWhenFound(action) abort
+func! s:DoActionWhenFound(action) abort
   if !executable('node')
     echoerr 'Node executable not found (required by further.vim)'
     return
@@ -60,14 +60,14 @@ function! s:DoActionWhenFound(action) abort
   else
     echom 'Can''t find module "' . l:file_name . '".'
   endif
-endfunction
+endfunc
 
 " Edit the resolved file location in the current pane.
-function! further#plugin#LocateAndEditFile() abort
+func! further#plugin#LocateAndEditFile() abort
   call s:DoActionWhenFound('edit')
-endfunction
+endfunc
 
 " Edit the resolved file location in a new tab.
-function! further#plugin#LocateAndEditFileInNewTab() abort
+func! further#plugin#LocateAndEditFileInNewTab() abort
   call s:DoActionWhenFound('tabedit')
-endfunction
+endfunc
