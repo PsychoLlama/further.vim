@@ -5,6 +5,11 @@ func! further#mappings#Initialize() abort
 
   let b:further_mappings_defined = 1
 
-  nnoremap <silent><buffer>gf :call further#plugin#LocateAndEditFile()<cr>
-  nnoremap <silent><buffer><C-w>gf :call further#plugin#LocateAndEditFileInNewTab()<cr>
+  " Normal mode
+  nnoremap <silent><buffer>gf :call further#plugin#LocateAndEditFile('n')<cr>
+  nnoremap <silent><buffer><C-w>gf :call further#plugin#LocateAndEditFileInNewTab('n')<cr>
+
+  " Visual mode
+  vnoremap <silent><buffer>gf :call further#plugin#LocateAndEditFile('v')<cr>
+  vnoremap <silent><buffer><C-w>gf :call further#plugin#LocateAndEditFileInNewTab('v')<cr>
 endfunc

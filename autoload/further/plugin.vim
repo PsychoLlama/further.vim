@@ -28,13 +28,15 @@ func! further#plugin#GetLocalFileName(module) abort
 endfunc
 
 " Execute a command once the file path is resolved.
-func! s:DoActionWhenFound(action) abort
+func! s:DoActionWhenFound(action, mode) abort
   if !executable('node')
     echoerr 'Node executable not found (required by further.vim)'
     return
   endif
 
-  let l:file_name = further#parsing#GetPathUnderCursor()
+  let l:file_name = a:mode is# 'n'
+        \ ? further#parsing#GetPathUnderCursor()
+        \ : further#parsing#GetSelectedPath()
 
   if l:file_name is v:null
     echohl Error
@@ -63,11 +65,11 @@ func! s:DoActionWhenFound(action) abort
 endfunc
 
 " Edit the resolved file location in the current pane.
-func! further#plugin#LocateAndEditFile() abort
-  call s:DoActionWhenFound('edit')
+func! further#plugin#LocateAndEditFile(mode) abort
+  call s:DoActionWhenFound('edit', a:mode)
 endfunc
 
 " Edit the resolved file location in a new tab.
-func! further#plugin#LocateAndEditFileInNewTab() abort
-  call s:DoActionWhenFound('tabedit')
+func! further#plugin#LocateAndEditFileInNewTab(mode) abort
+  call s:DoActionWhenFound('tabedit', a:mode)
 endfunc
