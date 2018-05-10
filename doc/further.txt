@@ -41,7 +41,8 @@ ease.
 2. Mappings                                                   *further-mappings*
 
   `gf`        Locate the file being imported and open it in the current pane
-  <C-w>`gf`   Same as `gf`, but instead opens it in a new tab.
+  <C-w>`f`    Open the module in a new horizontal split
+  <C-w>`gf`   Open the module in a new tab
 
 Example: >
                              cursor
@@ -50,6 +51,8 @@ Example: >
   (keypress) gf
   Vim edits "<root>/node_modules/redux/lib/index.js"
 <
+All mappings work in visual mode too. Whatever text is selected is treated as
+the module path.
 
 ==============================================================================
 3. Advanced                                                   *further-advanced*
@@ -128,6 +131,10 @@ Changed:
 Added:
 - Support for .json files.
 - Support for `gf` and `<C-w>gf` in visual mode.
+
+0.2.1
+Added:
+- New mapping `<C-w>f` to open the module in a split.
 
 ==============================================================================
 vim: ft=help tw=78:
