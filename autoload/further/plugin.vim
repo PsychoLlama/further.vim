@@ -73,3 +73,7 @@ endfunc
 func! further#plugin#LocateAndEditFileInNewTab(mode) abort range
   call s:DoActionWhenFound('tabedit', a:mode)
 endfunc
+
+func! further#plugin#LocateAndEditFileInSplit(mode) abort range
+  call s:DoActionWhenFound('split', a:mode)
+endfunc
