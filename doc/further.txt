@@ -24,7 +24,7 @@ Not everything is a relative file import though. What about this? >
 
   import React from 'react'
 <
-That doesn't make much sense to vim. Luckily, it has another feature, *path*
+That doesn't make much sense to vim. Luckily, it has another feature, |path|.
 It instructs vim which folders to look in when resolving `gf` file paths.
 But it ain't that simple. Resolving a module means finding it's folder,
 looking in the package.json for the `main` field, and opening that file... and
@@ -40,9 +40,10 @@ ease.
 ==============================================================================
 2. Mappings                                                   *further-mappings*
 
-  `gf`        Locate the file being imported and open it in the current pane
-  <C-w>`f`    Open the module in a new horizontal split
-  <C-w>`gf`   Open the module in a new tab
+  `gf`         Locate the file being imported and open it in the current pane
+  <C-w>`gf`    Open the module in a new tab
+  <C-w>`f`     Open the module in a new horizontal split
+  <C-w><C-f> Same as <C-w>`f`
 
 Example: >
                              cursor
@@ -53,6 +54,8 @@ Example: >
 <
 All mappings work in visual mode too. Whatever text is selected is treated as
 the module path.
+
+  Note: these mappings work in visual mode.
 
 ==============================================================================
 3. Advanced                                                   *further-advanced*
@@ -135,6 +138,11 @@ Added:
 0.2.1
 Added:
 - New mapping `<C-w>f` to open the module in a split.
+
+0.2.2
+Added:
+- Two new mappings: `<C-w><C-f>` in normal and visual mode. They do the same
+  thing as `<C-w>f` (see |CTRL-W_CTRL-F| for more details).
 
 ==============================================================================
 vim: ft=help tw=78:
