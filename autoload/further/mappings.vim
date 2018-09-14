@@ -3,6 +3,8 @@ func! further#mappings#Initialize() abort
     return
   endif
 
+  set isfname=@-@,@,48-57,/,.,-,_
+
   let b:further_mappings_defined = 1
 
   " Normal mode

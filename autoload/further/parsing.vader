@@ -1,0 +1,45 @@
+Before:
+  call further#mappings#Initialize()
+  normal! W
+
+Given (package with objectively bad characters):
+  import 'dots.and-dashes/cancer.css'
+
+Execute:
+  let filename = further#parsing#GetPathUnderCursor()
+  AssertEqual filename, 'dots.and-dashes/cancer.css'
+
+Given (org-scoped package name):
+  import '@org/package-name'
+
+Execute:
+  let filename = further#parsing#GetPathUnderCursor()
+  AssertEqual filename, '@org/package-name'
+
+Given (relative file import):
+  import '../../some/path/to/madness.graphql'
+
+Execute:
+  let filename = further#parsing#GetPathUnderCursor()
+  AssertEqual filename, '../../some/path/to/madness.graphql'
+
+Given (package name with numbers):
+  import 'react-codemirror2'
+
+Execute:
+  let filename = further#parsing#GetPathUnderCursor()
+  AssertEqual filename, 'react-codemirror2'
+
+Given (too many capital letters):
+  import 'WHY-WOULD-YOU-NAME-THINGS-THIS-WAY'
+
+Execute:
+  let filename = further#parsing#GetPathUnderCursor()
+  AssertEqual filename, 'WHY-WOULD-YOU-NAME-THINGS-THIS-WAY'
+
+Given (org scoped relative path):
+  import '@org_scoped/pkg.name/path.ext'
+
+Execute:
+  let filename = further#parsing#GetPathUnderCursor()
+  AssertEqual filename, '@org_scoped/pkg.name/path.ext'
