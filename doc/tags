@@ -1,7 +1,13 @@
 further	further.txt	/*further*
+further#Initialize()	further.txt	/*further#Initialize()*
+further#Resolve()	further.txt	/*further#Resolve()*
 further-advanced	further.txt	/*further-advanced*
 further-changelog	further.txt	/*further-changelog*
+further-configuration	further.txt	/*further-configuration*
+further-functions	further.txt	/*further-functions*
 further-mappings	further.txt	/*further-mappings*
 further-overview	further.txt	/*further-overview*
 further-toc	further.txt	/*further-toc*
 further.vim	further.txt	/*further.vim*
+g:further#extensions	further.txt	/*g:further#extensions*
+g:further#prefer_modules	further.txt	/*g:further#prefer_modules*
