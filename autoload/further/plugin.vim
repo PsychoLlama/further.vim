@@ -1,32 +1,3 @@
-" Query `require.resolve` for an absolute file path.
-func! further#plugin#ResolveFileLocation(path) abort
-  let l:current_dir = expand('%:p:h')
-  let l:cd_cmd = 'cd ' . shellescape(l:current_dir)
-  let l:node_expr = '' .
-        \ 'try {' .
-        \ '  require.resolve(' . shellescape(a:path) . ')' .
-        \ '} catch (error) {' .
-        \ '  ""' .
-        \ '}'
-
-  let l:node_cmd = 'node -p ' . shellescape(l:node_expr)
-
-  return substitute(system(l:cd_cmd . ' && ' . l:node_cmd), "\n", '', '')
-endfunc
-
-" Format a path relative to the current file's directory.
-func! further#plugin#GetLocalFileName(module) abort
-  if a:module[0] ==# '/'
-    return a:module
-  endif
-
-  let l:current_dir = expand('%:p:h')
-  let l:prefix = '/'
-
-  " ~/current/dir + / + some-file.ext
-  return l:current_dir . l:prefix . a:module
-endfunc
-
 " Execute a command once the file path is resolved.
 func! s:DoActionWhenFound(action, mode) abort
   if !executable('node')
@@ -34,6 +5,7 @@ func! s:DoActionWhenFound(action, mode) abort
     return
   endif
 
+  let l:context = expand('%:p:h')
   let l:file_name = a:mode is# 'n'
         \ ? further#parsing#GetPathUnderCursor()
         \ : further#parsing#GetSelectedPath()
@@ -46,13 +18,7 @@ func! s:DoActionWhenFound(action, mode) abort
     return
   endif
 
-  let l:file_path = further#plugin#GetLocalFileName(l:file_name)
-
-  " Before asking Node, see if the file exists as a relative path.
-  if !filereadable(l:file_path)
-    let l:file_path = further#plugin#ResolveFileLocation(l:file_name)
-  endif
-
+  let l:file_path = further#resolve#Import(l:context, l:file_name)
   if exists('*FurtherMapModuleName')
     let l:file_path = g:FurtherMapModuleName(l:file_path, l:file_name)
   endif
