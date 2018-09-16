@@ -10,8 +10,9 @@ CONTENTS                                                           *further-toc*
 
   1. Overview                                                 |further-overview|
   2. Mappings                                                 |further-mappings|
-  3. Advanced                                                 |further-advanced|
-  4. Changelog                                               |further-changelog|
+  3. Configuration                                       |further-configuration|
+  4. Advanced                                                 |further-advanced|
+  5. Changelog                                               |further-changelog|
 
 ==============================================================================
 1. Overview                                                   *further-overview*
@@ -30,8 +31,6 @@ But it ain't that simple. Resolving a module means finding it's folder,
 looking in the package.json for the `main` field, and opening that file... and
 that's ignoring how projects often have multiple versions of the same
 libraries, nested `node_modules` folders, and symlinks everywhere.
-
-It becomes unmanageable the second you enter a monorepo.
 
 That's where `further` shines. It replaces the built-in `gf` mapping with the
 JS module resolution algorithm, letting you navigate the maze of modules with
@@ -52,13 +51,55 @@ Example: >
   (keypress) gf
   Vim edits "<root>/node_modules/redux/lib/index.js"
 <
-All mappings work in visual mode too. Whatever text is selected is treated as
-the module path.
-
-  Note: these mappings work in visual mode.
+All mappings work in visual mode. Whatever text is selected is treated as the
+import path.
 
 ==============================================================================
-3. Advanced                                                   *further-advanced*
+3. Configuration                                         *further-configuration*
+
+------------------------------------------------------------------------------
+ES Modules                                            *g:further#prefer_modules*
+
+Some packages support a `pkg.module` field in addition to `pkg.main` meant for
+exporting ES Module friendly code. If you're working with Webpack 3 or greater
+(or Rollup), your bundler will prefer the `pkg.module` entry point, so wherever
+further takes you might not be the same file that gets imported.
+
+Further supports the `module` field, but it's opt-in. Put this in your vimrc
+to enable it:
+>
+  let g:further#prefer_modules = v:true
+
+When enabled, further checks `pkg.module`, `pkg.jsnext:main`, and falls back to
+`pkg.main`.
+
+------------------------------------------------------------------------------
+Custom File Extensions                                    *g:further#extensions*
+
+Some extensions are implied when importing, like `.js` and `.json`, and don't
+need to be explicitly stated. Further tries to support all the common
+extensions so most apps will work out of the box. Here's what it checks, in
+order:
+- .js
+- .json
+- .mjs
+- .node
+- .jsx
+- .ts
+- .tsx
+
+You can add more extensions with the `g:further#extensions` variable.
+>
+  " Registers .css and .vue extensions.
+  let g:further#extensions = ['.css', '.vue']
+
+Now, supposing you have a file `grid.css`, further can resolve paths without
+the extension:
+>
+  import grid from './grid'
+
+==============================================================================
+4. Advanced                                                   *further-advanced*
 
 It's possible to transform a file path before opening it. A perfect use-case
 is monorepos, where the import will direct you to compiled code. You don't
@@ -119,7 +160,7 @@ You'll probably need to tweak the function to work with your codebase, but not
 by much.
 
 ==============================================================================
-4. Changelog                                                 *further-changelog*
+5. Changelog                                                 *further-changelog*
 
 0.1.0
 Initial release

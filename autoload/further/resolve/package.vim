@@ -65,7 +65,7 @@ func! s:GetMainPackageExport(pkg_json) abort
   let l:jsnext = get(a:pkg_json, 'jsnext:main', l:main)
   let l:module = get(a:pkg_json, 'module', l:jsnext)
 
-  let l:prefer_module = get(g:, 'further#prefer_module', v:false)
+  let l:prefer_module = get(g:, 'further#prefer_modules', v:false)
   return l:prefer_module ? l:module : l:main
 endfunc
 
