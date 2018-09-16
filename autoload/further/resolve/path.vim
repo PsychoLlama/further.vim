@@ -8,6 +8,14 @@ let s:GLOBAL_PATHS = s:NODE_PATH + [
       \   expand('~/.node_libraries'),
       \ ]
 
+func! s:EnsureAbsolutePath(path) abort
+  if a:path[0] is# '/'
+    return a:path
+  endif
+
+  return fnamemodify(a:path, ':p')
+endfunc
+
 " Given a file path, locate every node_modules
 " folder it's capable of drawing from.
 " `abort` intentionally omitted. `:lcd` must be reset.
@@ -21,6 +29,7 @@ func! further#resolve#path#(file_path)
 
   call execute('lcd ' . fnameescape(l:dir))
   let l:module_folders = finddir('node_modules', ';', -1)
+  call map(l:module_folders, 's:EnsureAbsolutePath(v:val)')
   lcd -
 
   return l:module_folders + s:GLOBAL_PATHS
