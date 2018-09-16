@@ -11,8 +11,9 @@ CONTENTS                                                           *further-toc*
   1. Overview                                                 |further-overview|
   2. Mappings                                                 |further-mappings|
   3. Configuration                                       |further-configuration|
-  4. Advanced                                                 |further-advanced|
-  5. Changelog                                               |further-changelog|
+  4. Functions                                               |further-functions|
+  5. Advanced                                                 |further-advanced|
+  6. Changelog                                               |further-changelog|
 
 ==============================================================================
 1. Overview                                                   *further-overview*
@@ -99,7 +100,43 @@ the extension:
   import grid from './grid'
 
 ==============================================================================
-4. Advanced                                                   *further-advanced*
+4. Functions                                                 *further-functions*
+
+Further exposes a few public APIs that might be useful in your own scripts.
+
+------------------------------------------------------------------------------
+Resolving Modules                                            *further#Resolve()*
+
+Further implements the full Node module resolution algorithm
+(see: https://nodejs.org/api/modules.html#modules_all_together). It's exposed
+as a single function and behaves similar to `require.resolve(...)`. Here's an
+example:
+>
+  " Might be: "~/projects/app/node_modules/react/index.js"
+  let module_path = further#Resolve('react')
+
+Since module resolution depends on where the import originates, further
+supports an optional second parameter with a file path.
+>
+  let l:module_path = further#Resolve('react', expand('%:p'))
+
+As shown above, further actually defaults to the current buffer's file
+location.
+
+------------------------------------------------------------------------------
+Initializing                                              *further#Initialize()*
+
+When called, further is initialized in the current buffer. `gf` and related
+mappings will use the node module resolution algorithm.
+>
+  call further#Initialize()
+
+Once initialized, you can't uninitialize. No parameters are accepted.
+
+Further automatically initializes itself for `javascript` and `json` file types.
+
+==============================================================================
+5. Advanced                                                   *further-advanced*
 
 It's possible to transform a file path before opening it. A perfect use-case
 is monorepos, where the import will direct you to compiled code. You don't
@@ -160,7 +197,7 @@ You'll probably need to tweak the function to work with your codebase, but not
 by much.
 
 ==============================================================================
-5. Changelog                                                 *further-changelog*
+6. Changelog                                                 *further-changelog*
 
 0.1.0
 Initial release
