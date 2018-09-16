@@ -1,3 +1,10 @@
+let s:node_path_delimiter = has('win32') ? ';' : ':'
+let s:NODE_PATH = split($NODE_PATH, s:node_path_delimiter)
+let s:GLOBAL_PATHS = s:NODE_PATH + [
+      \   expand('~/.node_modules'),
+      \   expand('~/.node_libraries'),
+      \ ]
+
 " Given a file path, locate every node_modules
 " folder it's capable of drawing from.
 " `abort` intentionally omitted. `:lcd` must be reset.
@@ -13,5 +20,5 @@ func! further#resolve#path#(file_path)
   let l:module_folders = finddir('node_modules', ';', -1)
   lcd -
 
-  return l:module_folders
+  return l:module_folders + s:GLOBAL_PATHS
 endfunc
