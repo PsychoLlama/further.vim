@@ -1,3 +1,6 @@
+" Support for global module paths (mostly deprecated). Missing
+" the `process.config.node_prefix` path since it seems to only
+" be available inside Node's runtime as a compilation artifact.
 let s:node_path_delimiter = has('win32') ? ';' : ':'
 let s:NODE_PATH = split($NODE_PATH, s:node_path_delimiter)
 let s:GLOBAL_PATHS = s:NODE_PATH + [
