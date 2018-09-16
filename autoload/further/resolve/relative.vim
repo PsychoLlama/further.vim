@@ -30,12 +30,20 @@ endfunc
 
 " Resolve the path as either a file or a directory.
 func! further#resolve#relative#FileOrDirectory(path) abort
-  let l:file = a:path
-  if isdirectory(l:file)
-    let l:file = simplify(l:file . '/' . s:DEFAULT_ENTRY)
+  let l:file_path = further#resolve#relative#File(a:path)
+
+  " Check for files before directories.
+  if l:file_path isnot# v:null
+    return l:file_path
   endif
 
-  return further#resolve#relative#File(l:file)
+  " Not a file. Maybe it's a directory?
+  if isdirectory(a:path)
+    let l:file = simplify(a:path . '/' . s:DEFAULT_ENTRY)
+    return further#resolve#relative#File(l:file)
+  endif
+
+  return v:null
 endfunc
 
 " Resolve absolute and relative import paths. Context path
