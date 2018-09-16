@@ -24,10 +24,13 @@ func! further#resolve#relative#File(path) abort
   return v:null
 endfunc
 
+func! s:IsAbsolute(import) abort
+  return a:import[0] is# '/'
+endfunc
 
 " Resolve the path as either a file or a directory.
-func! further#resolve#relative#(file_or_directory) abort
-  let l:file = a:file_or_directory
+func! further#resolve#relative#FileOrDirectory(path) abort
+  let l:file = a:path
   if isdirectory(l:file)
     let l:file = simplify(l:file . '/' . s:DEFAULT_ENTRY)
   endif
@@ -37,11 +40,11 @@ endfunc
 
 " Resolve absolute and relative import paths. Context path
 " should be parent directory of the file doing the import.
-func! further#resolve#relative#ImportPath(context, import) abort
-  if a:import[0] is# '/'
-    return further#resolve#relative#File(a:import)
+func! further#resolve#relative#(context, import) abort
+  if s:IsAbsolute(a:import)
+    return further#resolve#relative#FileOrDirectory(a:import)
   endif
 
   let l:import_path = simplify(a:context . '/' . a:import)
-  return further#resolve#relative#File(l:import_path)
+  return further#resolve#relative#FileOrDirectory(l:import_path)
 endfunc

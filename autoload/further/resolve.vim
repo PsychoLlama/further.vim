@@ -10,7 +10,7 @@ endfunc
 " heavy lifting to logic in the resolve/ directory.
 func! further#resolve#Import(context, import) abort
   if s:IsRelativeImport(a:import)
-    return further#resolve#relative#ImportPath(a:context, a:import)
+    return further#resolve#relative#(a:context, a:import)
   endif
 
   return further#resolve#package#(a:context, a:import)

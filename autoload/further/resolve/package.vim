@@ -53,7 +53,7 @@ func! further#resolve#package#WithPath(context, pkg_path) abort
   endif
 
   let l:full_path = simplify(l:pkg_root . '/' . l:parsed_import.path)
-  return further#resolve#relative#(l:full_path)
+  return further#resolve#relative#FileOrDirectory(l:full_path)
 endfunc
 
 " Pull `main` from the package.json file. Try to be clever.
@@ -79,7 +79,7 @@ func! further#resolve#package#EntryFile(pkg_root) abort
   " Entry point was provided.
   if l:main isnot# v:null
     let l:entry_path = simplify(a:pkg_root . '/' . l:main)
-    let l:main_export = further#resolve#relative#(l:entry_path)
+    let l:main_export = further#resolve#relative#FileOrDirectory(l:entry_path)
 
     " Fall back to <lib>/index lookup if main field
     " is invalid (yes, that's what the spec says).
