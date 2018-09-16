@@ -65,15 +65,21 @@ func! further#resolve#package#EntryFile(pkg_root) abort
   let l:pkg = s:ReadPackageJson(l:pkg_json_path)
   let l:main = s:GetMainPackageExport(l:pkg)
 
-  " No entry point specified. Try to resolve `<lib>/index`.
-  if l:main is# v:null
-    let l:file_path = simplify(a:pkg_root . '/' . s:DEFAULT_ENTRY)
-    return further#resolve#relative#File(l:file_path)
+  " Entry point was provided.
+  if l:main isnot# v:null
+    let l:entry_path = simplify(a:pkg_root . '/' . l:main)
+    let l:main_export = further#resolve#relative#(l:entry_path)
+
+    " Fall back to <lib>/index lookup if main field
+    " is invalid (yes, that's what the spec says).
+    if filereadable(l:main_export)
+      return l:main_export
+    endif
   endif
 
-  " Entry point was provided.
-  let l:entry_path = simplify(a:pkg_root . '/' . l:main)
-  return further#resolve#relative#(l:entry_path)
+  " No entry point specified. Try to resolve `<lib>/index`.
+  let l:file_path = simplify(a:pkg_root . '/' . s:DEFAULT_ENTRY)
+  return further#resolve#relative#File(l:file_path)
 endfunc
 
 " If the file exists, try to parse it as json, otherwise
