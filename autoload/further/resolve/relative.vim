@@ -28,8 +28,11 @@ func! s:IsAbsolute(import) abort
   return a:import[0] is# '/'
 endfunc
 
-" Resolve the path as either a file or a directory.
-func! further#resolve#relative#FileOrDirectory(path) abort
+" Path could be a file or a module directory.
+" - path.{ext-list}
+" - path/package.json => main
+" - path/index.{ext-list}
+func! further#resolve#relative#Module(path) abort
   let l:file_path = further#resolve#relative#File(a:path)
 
   " Check for files before directories.
@@ -37,22 +40,35 @@ func! further#resolve#relative#FileOrDirectory(path) abort
     return l:file_path
   endif
 
-  " Not a file. Maybe it's a directory?
-  if isdirectory(a:path)
-    let l:file = simplify(a:path . '/' . s:DEFAULT_ENTRY)
-    return further#resolve#relative#File(l:file)
+  " Not a file. Either it's a module or it's invalid.
+  return further#resolve#module#EntryPoint(a:path)
+endfunc
+
+" Resolve the path either as path.{ext} or path/index.{ext}.
+" Do NOT check for a package.json.
+func! further#resolve#relative#FileOrIndex(path) abort
+  let l:file_path = further#resolve#relative#File(a:path)
+
+  " Check for files before directories.
+  if l:file_path isnot# v:null
+    return l:file_path
+  elseif !isdirectory(a:path)
+    return v:null
   endif
 
-  return v:null
+  " Try $path/index
+  let l:index = simplify(a:path . '/' . s:DEFAULT_ENTRY)
+  return further#resolve#relative#File(l:index)
 endfunc
 
 " Resolve absolute and relative import paths. Context path
 " should be parent directory of the file doing the import.
 func! further#resolve#relative#(context, import) abort
-  if s:IsAbsolute(a:import)
-    return further#resolve#relative#FileOrDirectory(a:import)
+  let l:import_path = a:import
+
+  if !s:IsAbsolute(a:import)
+    let l:import_path = simplify(a:context . '/' . a:import)
   endif
 
-  let l:import_path = simplify(a:context . '/' . a:import)
-  return further#resolve#relative#FileOrDirectory(l:import_path)
+  return further#resolve#relative#Module(l:import_path)
 endfunc

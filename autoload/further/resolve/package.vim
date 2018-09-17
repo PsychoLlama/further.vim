@@ -53,62 +53,7 @@ func! further#resolve#package#WithPath(context, pkg_path) abort
   endif
 
   let l:full_path = simplify(l:pkg_root . '/' . l:parsed_import.path)
-  return further#resolve#relative#FileOrDirectory(l:full_path)
-endfunc
-
-" Pull `main` from the package.json file. Try to be clever.
-func! s:GetMainPackageExport(pkg_json) abort
-  if a:pkg_json is# v:null | return v:null | endif
-
-  " Try several entry point conventions.
-  let l:main = get(a:pkg_json, 'main', s:DEFAULT_ENTRY)
-  let l:jsnext = get(a:pkg_json, 'jsnext:main', l:main)
-  let l:module = get(a:pkg_json, 'module', l:jsnext)
-
-  let l:prefer_module = get(g:, 'further#prefer_modules', v:false)
-  return l:prefer_module ? l:module : l:main
-endfunc
-
-" Given a package directory, find the main export file.
-" If the file doesn't exist or can't be inferred, return null.
-func! further#resolve#package#EntryFile(pkg_root) abort
-  let l:pkg_json_path = simplify(a:pkg_root . '/package.json')
-  let l:pkg = s:ReadPackageJson(l:pkg_json_path)
-  let l:main = s:GetMainPackageExport(l:pkg)
-
-  " Entry point was provided.
-  if l:main isnot# v:null
-    let l:entry_path = simplify(a:pkg_root . '/' . l:main)
-    let l:main_export = further#resolve#relative#FileOrDirectory(l:entry_path)
-
-    " Fall back to <lib>/index lookup if main field
-    " is invalid (yes, that's what the spec says).
-    if filereadable(l:main_export)
-      return l:main_export
-    endif
-  endif
-
-  " No entry point specified. Try to resolve `<lib>/index`.
-  let l:file_path = simplify(a:pkg_root . '/' . s:DEFAULT_ENTRY)
-  return further#resolve#relative#File(l:file_path)
-endfunc
-
-" If the file exists, try to parse it as json, otherwise
-" return null. Fail silently if the json is invalid (e.g. json5).
-func! s:ReadPackageJson(pkg_json_path) abort
-  if !filereadable(a:pkg_json_path)
-    return v:null
-  endif
-
-  let l:contents = readfile(a:pkg_json_path)
-  let l:contents = join(l:contents, "\n")
-
-  silent! let l:pkg_json = json_decode(l:contents)
-  if l:pkg_json isnot# 0
-    return l:pkg_json
-  endif
-
-  return v:null
+  return further#resolve#relative#Module(l:full_path)
 endfunc
 
 " Split between package#ByName and package#WithPath.
@@ -123,5 +68,5 @@ func! further#resolve#package#(context, import) abort
   " import 'package'
   let l:pkg_name = l:parsed_import.pkg_name
   let l:pkg_root = further#resolve#package#ByName(a:context, l:pkg_name)
-  return further#resolve#package#EntryFile(l:pkg_root)
+  return further#resolve#module#EntryPoint(l:pkg_root)
 endfunc
