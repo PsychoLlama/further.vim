@@ -8,12 +8,27 @@ let s:GLOBAL_PATHS = s:NODE_PATH + [
       \   expand('~/.node_libraries'),
       \ ]
 
+" Coerce every path to an absolute path.
 func! s:EnsureAbsolutePath(path) abort
   if a:path[0] is# '/'
     return a:path
   endif
 
   return fnamemodify(a:path, ':p')
+endfunc
+
+" node_modules exception (per spec): if the current path is
+" node_modules, don't look in node_modules/node_modules.
+func! s:CheckForDoublyNestedNodeModules(file_path, module_folders) abort
+  if fnamemodify(a:file_path, ':t') isnot# 'node_modules'
+    return
+  endif
+
+  " Assume `finddir` found the extra node_modules folder. Remove it.
+  let l:decoy_node_modules = simplify(a:file_path . '/node_modules')
+  if isdirectory(l:decoy_node_modules)
+    call remove(a:module_folders, 0)
+  endif
 endfunc
 
 " Given a file path, locate every node_modules
@@ -30,6 +45,7 @@ func! further#resolve#path#(file_path)
   call execute('lcd ' . fnameescape(l:dir))
   let l:module_folders = finddir('node_modules', ';', -1)
   call map(l:module_folders, 's:EnsureAbsolutePath(v:val)')
+  call s:CheckForDoublyNestedNodeModules(a:file_path, l:module_folders)
   lcd -
 
   return l:module_folders + s:GLOBAL_PATHS
