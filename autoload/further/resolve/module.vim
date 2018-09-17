@@ -1,8 +1,8 @@
 " High-level:
-" If $DIR/package.json then
+" if $DIR/package.json then
 "   load file($DIR + pkg.main) or
-"   load file($DIR + pkg.main + 'index')
-" else load index($DIR)
+"   load file($DIR + pkg.main + '/index')
+" else load file($DIR + '/index')
 
 let s:DEFAULT_ENTRY = g:further#constants#DEFAULT_ENTRY
 
