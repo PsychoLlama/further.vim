@@ -228,5 +228,9 @@ Changed:
   Features better performance, smarter resolution, and support for more file
   extensions.
 
+0.3.1
+Added:
+- Automatically enable further.vim in TypeScript files.
+
 ==============================================================================
 vim: ft=help tw=78:
