@@ -1,45 +1,21 @@
 # Further.vim
-Follow JavaScript imports to their source
+Follow JavaScript imports to their source.
 
 ## Purpose
 The `gf` mapping in vim edits the file under your cursor, but it doesn't work
-well in JavaScript. File extensions are implied, `node_modules` directories
-can be nested beneath themselves, and there can be different package versions
-depending on what symlink you follow.
+in JavaScript. Node's module resolution is too complex for Vim to generalize.
 
-`further.vim` aims for seamless JavaScript imports traversal, replacing the
-built-in `gf` mapping with the JS module resolution algorithm. But, you know,
-only in JavaScript files.
+`further.vim` teaches Vim how to navigate JavaScript modules by replacing the
+built-in `gf` mapping with a full Vimscript implementation of Node's [module
+resolution
+algorithm](https://nodejs.org/api/modules.html#modules_all_together).
 
-## Redirects
-Most libraries will resolve to a babel-compiled file. Efficient, but not easily
-readable by humans.
+---
 
-`further.vim` exposes a hook for this. Defining a special function allows you
-to intercept the resolved file path and change it to something else.
-
-The easiest way is just replacing `dist/` with `src/` and seeing if it
-resolves to an actual file. If not, just return it unchanged.
-
-```viml
-" Replace 'dist/' with 'src/', unless that results in an unreadable file.
-function! g:FurtherMapModuleName(file_path, module_name)
-  let l:sourcified = substitute(a:file_path, '/dist/', '/src/', '')
-
-  if filereadable(l:sourcified)
-    return l:sourcified
-  endif
-
-  return a:file_path
-endfunction
-```
-
-Intercepts are even more useful when the pathname can't be known without
-app-specific knowledge, like the location of AngularJS html templates, or
-a config file with implied directory prefixes.
-
-If you're unsure how to use the intercept function, open an issue. I'm more
-than willing to help!
+TL;DR:
+- Put cursor over JavaScript import
+- Press `gf`
+- Vim opens the file
 
 ## Installation
 **vim-plug**
@@ -57,14 +33,39 @@ Plugin 'PsychoLlama/further.vim'
 git clone https://github.com/psychollama/further.vim ~/.vim/bundle/
 ```
 
+## FAQ
+<dl>
+  <dt>Does it work with TypeScript?</dt>
+  <dd>Yeah</dd>
+
+  <dt>How do I add support for new file extensions?</dt>
+  <dd>
+    <pre lang="viml"><code>let g:further#extensions = ['.like-this']</code></pre>
+  </dd>
+
+  <dt>How do I open a file in a new split?</dt>
+  <dd>Try <code>&lt;c-w&gt;gf</code></dd>
+
+  <dt>Is there a programmatic API?</dt>
+  <dd><code>:help further-functions</code></dd>
+
+  <dt>Anything else I should know?</dt>
+  <dd>Sometimes dolphins use pufferfish to get high.</dd>
+</dl>
+
 ## Documentation
 All the docs are in the `further` help page. Install the plugin then run:
 ```viml
-:help further
+:help further.vim
 ```
 
-## Contributing
-Find a bug or have a question? I'd love to help! Submit an issue and we can
-brainstorm a solution.
+## Customization
+Further works out of the box, but if you want, you can completely customize
+resolution on a global or per-module basis. For instance: you could open
+`src/` instead of `dist/`, rewrite monorepo imports, or resolve paths to
+a different repository entirely.
 
-Thanks for being a cool user. High five :raised_hand:
+Check out `:help further-advanced` for details.
+
+## Help
+If something isn't working, send me an issue and I'll do my best to help.
