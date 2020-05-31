@@ -75,6 +75,30 @@ When enabled, further checks `pkg.module`, `pkg.jsnext:main`, and falls back to
 `pkg.main`.
 
 ------------------------------------------------------------------------------
+Resolving Symbolic Links                            *g:further#resolve_symlinks*
+
+Monorepo tools typically use symlinks to "install" dependencies from the same
+repo. You'll see this with yarn workspaces, lerna, and "npm link".
+
+Take this for example:
+
+- packages/
+  - pkg1/
+  - pkg2/
+    - node_modules/
+      - pkg1 -> ../../pkg1
+
+If `pkg2` depends on `pk1`, it gets symlinked instead of copied. Opening the
+file in vim shows the `node_modules` path.
+
+Since that has a tendency to break vim plugins, further always resolves
+symlinks before opening files. If you prefer, you can disable that behavior:
+>
+  let g:further#resolve_symlinks = v:false
+
+Option added in v0.4.0.
+
+------------------------------------------------------------------------------
 Custom File Extensions                                    *g:further#extensions*
 
 Some extensions are implied when importing, like `.js` and `.json`, and don't
@@ -231,6 +255,12 @@ Changed:
 0.3.1
 Added:
 - Automatically enable further.vim in TypeScript files.
+
+0.4.0
+Changed:
+- If the final module resolves to a symlink, now further automatically
+  resolves it before opening the file. This can be disabled with
+  `g:further#resolve_symlinks`.
 
 ==============================================================================
 vim: ft=help tw=78:

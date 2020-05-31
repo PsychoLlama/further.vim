@@ -13,5 +13,12 @@ func! further#resolve#Import(context, import) abort
     return further#resolve#relative#(a:context, a:import)
   endif
 
-  return further#resolve#package#(a:context, a:import)
+  let l:result = further#resolve#package#(a:context, a:import)
+  let l:resolve_symlinks = get(g:, 'further#resolve_symlinks', v:true)
+
+  if l:resolve_symlinks && (type(l:result) is# v:t_string)
+    return resolve(l:result)
+  endif
+
+  return l:result
 endfunc

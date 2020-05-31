@@ -11,3 +11,4 @@ further-toc	further.txt	/*further-toc*
 further.vim	further.txt	/*further.vim*
 g:further#extensions	further.txt	/*g:further#extensions*
 g:further#prefer_modules	further.txt	/*g:further#prefer_modules*
+g:further#resolve_symlinks	further.txt	/*g:further#resolve_symlinks*
