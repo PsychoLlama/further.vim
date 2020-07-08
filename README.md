@@ -49,6 +49,9 @@ git clone https://github.com/psychollama/further.vim ~/.vim/bundle/
   <dt>Is there a programmatic API?</dt>
   <dd><code>:help further-functions</code></dd>
 
+  <dt>Does it work with <a href="https://yarnpkg.com/features/pnp">Plug'n'Play</a>?</dt>
+  <dd>No.</dd>
+
   <dt>Anything else I should know?</dt>
   <dd>Sometimes dolphins use pufferfish to get high.</dd>
 </dl>
