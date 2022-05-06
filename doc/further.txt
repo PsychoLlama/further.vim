@@ -262,5 +262,10 @@ Changed:
   resolves it before opening the file. This can be disabled with
   `g:further#resolve_symlinks`.
 
+0.4.1
+Changed:
+- Better detection for intercept functions. This plays nicer with hooks
+  defined in Lua.
+
 ==============================================================================
 vim: ft=help tw=78:

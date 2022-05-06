@@ -19,7 +19,7 @@ func! s:DoActionWhenFound(action, mode) abort
   endif
 
   let l:file_path = further#resolve#Import(l:context, l:file_name)
-  if exists('*FurtherMapModuleName')
+  if exists('*g:FurtherMapModuleName')
     let l:file_path = g:FurtherMapModuleName(l:file_path, l:file_name)
   endif
 
